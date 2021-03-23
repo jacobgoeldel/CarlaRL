@@ -10,7 +10,17 @@ import carla
 from car import Car
 from waypoints import WaypointManager
 from reward_function import reward_function
-import train
+
+WORLD = "town03"
+WAYPOINT_STEPS_MAX = 80
+IM_WIDTH = 160
+IM_HEIGHT = 120
+STEER_AMT = 0.3
+SPEED = 0.3
+WAYPOINT_COMPLETED_RANGE = 1.0
+WAYPOINT_DISTANCE_BETWEEN = 5.0
+WAYPOINT_PATH_LENGTH = 200.0
+STEPS_PER_SECOND = 10.0
 
 
 class CarlaGym(gym.Env):
@@ -25,7 +35,7 @@ class CarlaGym(gym.Env):
         self.client = carla.Client("localhost", 2000)
         self.client.set_timeout(60.0)
         self.world = self.client.get_world()
-        self.world = self.client.load_world(train.WORLD)
+        self.world = self.client.load_world(WORLD)
         self.map = self.world.get_map()
 
         # used to run  car creation code once
@@ -33,7 +43,7 @@ class CarlaGym(gym.Env):
 
         settings = self.world.get_settings()
         settings.synchronous_mode = True
-        settings.fixed_delta_seconds = 1 / train.STEPS_PER_SECOND
+        settings.fixed_delta_seconds = 1 / STEPS_PER_SECOND
         settings.substepping = True
         settings.max_substep_delta_time = 0.01
         settings.max_substeps = 100
@@ -96,7 +106,7 @@ class CarlaGym(gym.Env):
 
         # end after the time limit is up
         self.waypoint_steps += 1
-        if self.waypoint_steps >= train.WAYPOINT_STEPS_MAX:
+        if self.waypoint_steps >= WAYPOINT_STEPS_MAX:
             done = True
             reward = -20.0
 

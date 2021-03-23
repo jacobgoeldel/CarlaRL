@@ -3,7 +3,7 @@ import random
 import math
 import cv2
 
-import train
+import carla_env
 import carla
 
 
@@ -19,8 +19,8 @@ class Car:
 
         # create the camera sensor
         self.rgb_cam = self.blueprint_library.find("sensor.camera.rgb")
-        self.rgb_cam.set_attribute("image_size_x", f"{train.IM_WIDTH}")
-        self.rgb_cam.set_attribute("image_size_y", f"{train.IM_HEIGHT}")
+        self.rgb_cam.set_attribute("image_size_x", f"{carla_env.IM_WIDTH}")
+        self.rgb_cam.set_attribute("image_size_y", f"{carla_env.IM_HEIGHT}")
         self.rgb_cam.set_attribute("fov", f"90")
 
         self.rgb_cam = self.world.spawn_actor(
@@ -73,14 +73,14 @@ class Car:
         self.vehicle.set_transform(new_transform)
 
     def apply_input(self, action):
-        control = carla.VehicleControl(throttle=train.SPEED)
+        control = carla.VehicleControl(throttle=carla_env.SPEED)
 
         if action == 0:  # left
-            control.steer = -train.STEER_AMT
+            control.steer = -carla_env.STEER_AMT
         elif action == 1:  # straight
             control.steer = 0
         elif action == 2:  # right
-            control.steer = train.STEER_AMT
+            control.steer = carla_env.STEER_AMT
         else:
             assert False, "Vehicle was given input action outside of it's range"
 
@@ -109,9 +109,9 @@ class Car:
     def __process_img(self, image):
         '''Gets image from camera sensor and transforms it into a grayscale array between 0 and 1'''
         i = np.array(image.raw_data)
-        i2 = i.reshape((train.IM_HEIGHT, train.IM_WIDTH, 4))
+        i2 = i.reshape((carla_env.IM_HEIGHT, carla_env.IM_WIDTH, 4))
         i3 = i2[:, :, :3]
         gray = cv2.cvtColor(i3, cv2.COLOR_RGB2GRAY)
         gray = gray.astype('uint8')
         self.front_camera = gray.reshape(
-            (train.IM_HEIGHT, train.IM_WIDTH, 1))
+            (carla_env.IM_HEIGHT, carla_env.IM_WIDTH, 1))
