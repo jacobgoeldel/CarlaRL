@@ -9,6 +9,7 @@ import gym
 import carla
 from car import Car
 from waypoints import WaypointManager
+from reward_function import reward_function
 
 WORLD = "town03"
 WAYPOINT_STEPS_MAX = 80
@@ -95,37 +96,13 @@ class CarlaGym(gym.Env):
     def world_tick(self):
         self.world.tick()
 
-    def reward_function(self, action):
-        if len(self.vehicle.collision_hist) != 0:
-            reward = -50.0
-            done = True
-        else:
-            done = False
-
-            current_position = self.vehicle.get_location()
-            distance = self.waypoints.distance_to_point(current_position)
-
-            # give a reward if the car went through a waypoint and remove that waypoint
-            if distance < WAYPOINT_COMPLETED_RANGE:
-                reward = 20
-                self.waypoints.pop(0)
-                self.waypoint_steps = 0  # reset the time
-                # end the episode if all of the waypoints have been followed
-                if not self.waypoints:
-                    done = True
-            else:  # reward based on how close it is to the next waypoint
-                reward = (WAYPOINT_DISTANCE_BETWEEN -
-                          distance) * 0.2 + 0.1
-
-        return reward, done
-
     def step(self, action):
         self.world_tick()
 
         self.update_camera()
 
         self.vehicle.apply_input(action)
-        reward, done = self.reward_function(action)
+        reward, done = reward_function(self)
 
         # end after the time limit is up
         self.waypoint_steps += 1
