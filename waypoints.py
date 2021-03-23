@@ -2,7 +2,7 @@ import math
 import numpy as np
 
 import carla
-import carla_env
+import train
 
 
 class WaypointManager:
@@ -21,9 +21,9 @@ class WaypointManager:
 
         # get a series of waypoints based on the first one and add it to a list.
         # the car will be rewarded for following these waypoints
-        for i in range(int(carla_env.WAYPOINT_PATH_LENGTH // carla_env.WAYPOINT_DISTANCE_BETWEEN)):
+        for i in range(int(train.WAYPOINT_PATH_LENGTH // train.WAYPOINT_DISTANCE_BETWEEN)):
             self.waypoints.append(waypoint)
-            waypoint = waypoint.next(carla_env.WAYPOINT_DISTANCE_BETWEEN).pop()
+            waypoint = waypoint.next(train.WAYPOINT_DISTANCE_BETWEEN).pop()
 
         # remove the first waypoint, as it is at the vehicles spawn
         self.waypoints.pop(0)
