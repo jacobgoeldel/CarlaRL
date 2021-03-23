@@ -5,7 +5,7 @@ from stable_baselines.common.callbacks import CheckpointCallback
 from stable_baselines import PPO2, A2C
 
 
-NAME = "Changed Orientation"
+NAME = "Refactoring"
 LEARNING_RATE = 0.0003
 GAMMA = 0.99
 TRAINING_TIME = 1_000_000_000
@@ -24,7 +24,7 @@ checkpoint_callback = CheckpointCallback(save_freq=SAVE_EVERY, save_path='./mode
 model = A2C("MlpPolicy", env, gamma=GAMMA, learning_rate=LEARNING_RATE, verbose=1,
             tensorboard_log="./logs/")
 
-model.load("models/Steve_140000_steps.zip")
+# model.load("models/Steve_140000_steps.zip")
 
 # Train the agent
 model.learn(total_timesteps=TRAINING_TIME, tb_log_name=NAME,
